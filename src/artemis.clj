@@ -3,9 +3,7 @@
     [org.apache.activemq.artemis.api.core.client
     ActiveMQClient]
     [org.apache.activemq.artemis.api.core
-    QueueConfiguration
-    TransportConfiguration]
-    [org.apache.activemq.artemis.core.remoting.impl.invm InVMConnectorFactory]
+    QueueConfiguration]
     [org.apache.activemq.artemis.core.config.impl ConfigurationImpl]
     [org.apache.activemq.artemis.core.server.embedded EmbeddedActiveMQ]
     ))
@@ -32,19 +30,17 @@
 (def session-factory (.createSessionFactory server-locator))
 
 (def session (.createSession session-factory))
-;(def session (.createSession session-factory "ss" "pass" false false false false 10))
-(def address "address-example")
-(def queue "queue-example")
-(.createQueue session address queue true)
+(def queue-address-name "example")
+(.createQueue session (QueueConfiguration. queue-address-name))
 
-(def producer (.createProducer session address))
+(def producer (.createProducer session queue-address-name))
 
 (def message (.createMessage session true))
 (.writeString (.getBodyBuffer message) "hello")
 
 (.send producer message)
 (.start session)
-(def consumer (.createConsumer session queue))
+(def consumer (.createConsumer session queue-address-name))
 
 (def received-message (.receive consumer))
 
